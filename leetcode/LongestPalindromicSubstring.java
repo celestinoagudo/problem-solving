@@ -1,7 +1,5 @@
 package leet.code.practice.set;
 
-import java.util.HashSet;
-
 public class LongestPalindromicSubstring {
 
   public static void main(String[] args) {
@@ -9,8 +7,9 @@ public class LongestPalindromicSubstring {
     System.out.println(message + getLongest("forgeeksskeegfor"));
     System.out.println(message + getLongest("forgeeksskeega"));
     System.out.println(message + getLongest("ageeksskeegfor"));
-    System.out.println(message + getLongest("GeEks"));
+    System.out.println(message + getLongest("geeks"));
     System.out.println(message + getLongest("dabcba"));
+    System.out.println(message + getLongest("abb"));
   }
 
   /**
@@ -23,49 +22,29 @@ public class LongestPalindromicSubstring {
    * @return longest palindromic substring
    */
   private static String getLongest(final String input) {
-    if ((input == null) || input.isBlank()) {
-      throw new IllegalArgumentException("Input is not valid");
+    if ((input == null) || input.isEmpty() || (input.length() == 1)) {
+      return input;
     }
-    var substrings = new HashSet<String>();
-    var palindromes = new HashSet<String>();
-    for (var a = 0; a < input.length(); ++a) {
-      for (var b = a + 1; b <= input.length(); ++b) {
-        substrings.add(input.substring(a, b));
-      }
+    final var asBuilder = new StringBuilder(input);
+    if (input.equals(asBuilder.reverse().toString())) {
+      return input;
     }
-    validate(substrings, palindromes);
-    return palindromes.stream().max((first, second) -> first.length() - second.length()).orElse("");
-  }
-
-  /**
-   * utility method that checks whether substring is palindrome
-   * 
-   * @param substrings substrings set
-   * @param palindromes container of valid palindromes
-   */
-  private static void validate(final HashSet<String> substrings,
-      final HashSet<String> palindromes) {
-    var start = 0;
-    var end = 0;
-    var isValid = true;
-    for (var substring : substrings) {
-      end = substring.length() - 1;
-      while (start <= end) {
-        if (Character.toLowerCase(substring.charAt(start)) != Character
-            .toLowerCase(substring.charAt(end))) {
-          isValid = false;
-        }
-        if (!isValid) {
+    var longest = "";
+    var maximum = 0;
+    for (var start = 0; start < input.length(); ++start) {
+      for (var end = start + 1; end <= input.length(); ++end) {
+        final String substring = input.substring(start, end);
+        var reversed = (new StringBuilder(substring)).reverse();
+        if (!input.contains(reversed.toString())) {
           break;
         }
-        ++start;
-        --end;
+        if (substring.equals(reversed.toString()) && (substring.length() > maximum)) {
+          longest = substring;
+          maximum = substring.length();
+        }
+
       }
-      if (isValid) {
-        palindromes.add(substring);
-      }
-      start = 0;
-      isValid = true;
     }
+    return longest;
   }
 }
